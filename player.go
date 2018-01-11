@@ -49,7 +49,7 @@ func (c *Client) GetPlayer(username string, region string, mode string, season s
 	}
 	element, ok := getElementById("userNickname", root)
 	if !ok {
-		return player, fmt.Errorf("GetPlayer:: Could not locate player ID on Player page", err.Error())
+		return player, fmt.Errorf("GetPlayer:: Could not locate player ID on Player page")
 	}
 	for _, a := range element.Attr {
 		if a.Key == "data-user_id" {

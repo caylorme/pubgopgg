@@ -40,16 +40,16 @@ func (c *Client) GetPlayer(username string, region string, mode string, season s
 	player = &Player{}
 	resp, err := c.Get(API_ROOT+"/user/"+username+"?server="+region)
 	if err != nil {
-		return player, fmt.Errorf("GetPlayer:: failed to request Player page", err)
+		return player, fmt.Errorf("GetPlayer:: failed to request Player page", err.Error())
 	}
 	defer resp.Body.Close()
 	root, err := html.Parse(resp.Body)
 	if err != nil  {
-		return player, fmt.Errorf("GetPlayer:: failed to parse html on Player page", err)
+		return player, fmt.Errorf("GetPlayer:: failed to parse html on Player page", err.Error())
 	}
 	element, ok := getElementById("userNickname", root)
 	if !ok {
-		return player, fmt.Errorf("GetPlayer:: Could not locate player ID on Player page", err)
+		return player, fmt.Errorf("GetPlayer:: Could not locate player ID on Player page", err.Error())
 	}
 	for _, a := range element.Attr {
 		if a.Key == "data-user_id" {
@@ -62,17 +62,17 @@ func (c *Client) GetPlayer(username string, region string, mode string, season s
 	path := "/api/users/" + player.ID + "/ranked-stats?season="+season+"&server="+region+"&queue_size=4&mode="+mode	
 	resp, err = c.Get(API_ROOT+path)
 	if err !=  nil {
-		return player, fmt.Errorf("GetPlayer:: failed to get stats for Player", err)
+		return player, fmt.Errorf("GetPlayer:: failed to get stats for Player", err.Error())
 	}
 	stats, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 	if err != nil {
-		return player, fmt.Errorf("GetPlayer:: failed to read stats for Player", err)
+		return player, fmt.Errorf("GetPlayer:: failed to read stats for Player", err.Error())
 	}
 
 	err = json.Unmarshal(stats, &player)
 	if err != nil {
-		return player, fmt.Errorf("GetPlayer:: failed to parse stats of Player", err)
+		return player, fmt.Errorf("GetPlayer:: failed to parse stats of Player", err.Error())
 	}
 	player.Region = region
 	player.Mode = mode

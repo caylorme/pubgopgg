@@ -1,35 +1,35 @@
 package pubgopgg
 
 import (
+	"encoding/json"
 	"fmt"
 	"golang.org/x/net/html"
 	"io/ioutil"
-	"encoding/json"
 )
 
 type Player struct {
-	Username	string
-	ID			string
-	Region		string
-	Mode		string
-	Season		string
-	Stats		Stats
-	Ranks		Ranks
+	Username string
+	ID       string
+	Region   string
+	Mode     string
+	Season   string
+	Stats    Stats
+	Ranks    Ranks
 }
 type Stats struct {
-	Rating				int
-	Matches_cnt			int
-	Win_matches_cnt		int
-	Topten_matches_cnt	int
-	Kills_sum			int
-	Kills_max			int
-	Assists_sum			int
-	Headshot_kills_sum	int
-	Deaths_sum			int
-	Longest_kill_max	int
-	Rank_avg			float64
-	Damage_dealt_avg	float64
-	Time_survived_avg	float64
+	Rating             int
+	Matches_cnt        int
+	Win_matches_cnt    int
+	Topten_matches_cnt int
+	Kills_sum          int
+	Kills_max          int
+	Assists_sum        int
+	Headshot_kills_sum int
+	Deaths_sum         int
+	Longest_kill_max   int
+	Rank_avg           float64
+	Damage_dealt_avg   float64
+	Time_survived_avg  float64
 }
 
 type Ranks struct {
@@ -38,13 +38,13 @@ type Ranks struct {
 
 func (c *Client) GetPlayer(username string, region string, mode string, season string) (player *Player, err error) {
 	player = &Player{}
-	resp, err := c.Get(API_ROOT+"/user/"+username+"?server="+region)
+	resp, err := c.Get(API_ROOT + "/user/" + username + "?server=" + region)
 	if err != nil {
 		return player, fmt.Errorf("GetPlayer:: failed to request Player page", err.Error())
 	}
 	defer resp.Body.Close()
 	root, err := html.Parse(resp.Body)
-	if err != nil  {
+	if err != nil {
 		return player, fmt.Errorf("GetPlayer:: failed to parse html on Player page", err.Error())
 	}
 	element, ok := getElementById("userNickname", root)
@@ -59,9 +59,9 @@ func (c *Client) GetPlayer(username string, region string, mode string, season s
 		}
 	}
 
-	path := "/api/users/" + player.ID + "/ranked-stats?season="+season+"&server="+region+"&queue_size=4&mode="+mode	
-	resp, err = c.Get(API_ROOT+path)
-	if err !=  nil {
+	path := "/api/users/" + player.ID + "/ranked-stats?season=" + season + "&server=" + region + "&queue_size=4&mode=" + mode
+	resp, err = c.Get(API_ROOT + path)
+	if err != nil {
 		return player, fmt.Errorf("GetPlayer:: failed to get stats for Player", err.Error())
 	}
 	stats, err := ioutil.ReadAll(resp.Body)

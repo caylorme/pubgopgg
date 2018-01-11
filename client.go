@@ -1,6 +1,6 @@
 package pubgopgg
 
-import(
+import (
 	"net/http"
 )
 
